@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('chats', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('form')->unsigned();
+            $table->integer('from')->unsigned();
             $table->integer('to')->unsigned();
             $table->text('text');
             $table->boolean('read')->default(false);

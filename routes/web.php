@@ -13,16 +13,31 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/login', function() {
+    return view('workwise.auth.login');
+});
+
+Route::get('/groups', function() {
+    return view('workwise.groups.index');
+});
+
 Route::group([
     'middleware' => ['auth','PreventBackHistory'],
+    'namespace' => "App\Http\Controllers"
 ],function () {
-    Route::get('/', 'App\Http\Controllers\ChatController@index');
-    Route::post('/show-friend', 'App\Http\Controllers\ChatController@showFriend');
-    Route::post('/send-message', 'App\Http\Controllers\ChatController@addMessage');
+    Route::get('/message', 'ChatController@index');
+    Route::post('/show-friend', 'ChatController@showFriend');
+    Route::post('/send-message', 'ChatController@addMessage');
 
+    //Giao diện chính
+    Route::group([
+        'namespace' => "Client"
+    ], function() {
+        Route::get('/','DashboardController@index');
+    });
 
     //Đăng xuất tài khoản
-    Route::get('/logout','App\Http\Controllers\LoginController@logout');
+    Route::get('/logout','LoginController@logout');
 });
 
 
@@ -31,3 +46,4 @@ Route::post('/login', 'App\Http\Controllers\LoginController@login');
 Route::post('/register', 'App\Http\Controllers\LoginController@register');
 Route::get("/verifiablde-email", 'App\Http\Controllers\LoginController@verifiableEmail');
 Route::post("/check-verifiablde-email", 'App\Http\Controllers\LoginController@checkVerifiableEmail');
+Route::get("/send-again-email", 'App\Http\Controllers\LoginController@sendAgainEmail');

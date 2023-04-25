@@ -36,6 +36,17 @@ $(document).ready(function () {
                 }
             }
         });
-        
+    });
+
+    $("#btn-send-agian-mail").on('click', function() {
+        // alert("HELLO WORLD");
+        $.ajax({
+            type: "GET",
+            url: "/send-again-email",
+            dataType: "JSON",
+            success: function (response) {
+                
+            }
+        });
     })
 });

@@ -49,11 +49,12 @@ class ChatController extends Controller
         $user = User::where('id', $data['id'])
                     ->select('id','name')
                     ->first();
-        
-        $messages = Message::where(['form' => $data['id'],'to' => $id_me])
-                            ->orWhere(['form' => $id_me,'to' => $data['id']])
-                            ->orderBy('created_at','ASC')
-                            ->get(['form','to','text','created_at']);
+
+        $messages = Message::where(function ($query) use($data, $id_me) {
+            $query->where(['form' => $data['id'], 'to' => $id_me]);
+        })->orWhere(function ($query) use($data, $id_me) {
+            $query->where(['to' => $data['id'], 'form' => $id_me]);
+        })->get(['form','to','text','created_at']);
 
         return response()->json(['data' => ["user" => $user,"messages" => $messages]] ,200);
    }

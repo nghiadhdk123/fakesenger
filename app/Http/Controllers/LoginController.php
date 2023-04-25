@@ -7,6 +7,7 @@ use App\Models\User;
 use Auth;
 use Hash;
 use Session;
+use Mail;
 use Carbon\Carbon;
 
 class LoginController extends Controller
@@ -53,15 +54,25 @@ class LoginController extends Controller
     public function register(Request $request) {
         $data = $request->only(['email', 'name', 'password']);
 
+        $rand_code = random_int(100000, 999999);
+
         $user = new User();
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
-        $user->token =  random_int(100000, 999999);
+        $user->token =  $rand_code;
         $user->time_life_token = Carbon::now('Asia/Ho_Chi_Minh')->addMinutes(5);
         $user->save();
-
+        
         $token = $this->createTokenVerifiableEmail($data['email']);
+        
+        $info = [
+            'email' => $data['email'],
+            'name' => $data['name'],
+            'code' => $rand_code,
+        ];
+
+        $this->sendMail($info);
 
         return response()->json(['data' => ['code' => 302,'userEmail' => $data['email'], 'userToken' => $token]], 200);
     }
@@ -101,6 +112,18 @@ class LoginController extends Controller
         }
     }
 
+    public function sendAgainEmail(Request $request) {
+       $data = [
+        'email' => Session::get('email'),
+        'code' => random_int(100000, 999999),
+       ];
+
+       $user = User::where('email', $data['email'])->update(['token' => $data['code']]);
+
+       $this->sendMail($data);
+       return response()->json(['data' => ['code' => 200]], 200);
+    }
+
     //Hàm tạo token để vào trang xác thực Email
     private function createTokenVerifiableEmail($email) {
         Session::forget('token');
@@ -111,5 +134,13 @@ class LoginController extends Controller
         Session::put(['token' => $token, 'email' => $email]);
 
         return $token;
+    }
+
+    private function sendMail($data) {
+        Mail::send('send-email-user', $data, function ($message) use($data) {
+            $message->from('adminFakeSenger@gmail.com', 'Admin Dev');
+            $message->to($data['email']);
+            $message->subject('FakeSenger mã xác minh tài khoản.');
+        });
     }
 }

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{-- <meta HTTP-EQUIV="Refresh" CONTENT="0; URL=https://stackoverflow.com/questions/16995102/laravel-eloquent-query-using-where-with-or-and-or"> --}}
     <title>Chat cùng mọi người</title>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
@@ -193,6 +194,7 @@
             margin: 0;
             height: 500px;
             overflow-y: auto;
+            padding: 0 2%;
         }
 
         .clearfix {
@@ -253,6 +255,27 @@
         .log-out i {
             cursor: pointer;
         }
+
+        .time-chat {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 11px;
+            color: gray;
+        }
+
+        .col-info-user {
+            display: none;
+        }
+
+        .col-empty-message {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+            padding: 0;
+        }
     </style>
 </head>
 
@@ -298,14 +321,15 @@
                             <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg"
                                 alt="" class="image-friend">
                             <div class="status-active ">
-                                <span class="font-weight-bold info-name-friend">Trần Đình Nghĩa</span>
+                                <span class="font-weight-bold info-name-friend"></span>
                                 <span class="status">Online</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 wrapper-content-message">
                         <ul class="content-message">
-                            {{-- <li class="clearfix">
+                            {{-- <span class="time-chat">00:13</span>
+                            <li class="clearfix">
                                 <p class="message me">Lorem ipsum dolor sit amet consectetur adipisicing elit.
                                     Laudantium molestias
                                     omnis praesentium vel eius voluptates voluptatibus aut, distinctio ex adipisci at
@@ -318,18 +342,9 @@
                                     accusantium facilis voluptates quos nihil voluptas magnam omnis accusamus non
                                     veritatis quasi sunt, nemo numquam necessitatibus? Aliquam, eius.</p>
                             </li>
+                            <span class="time-chat">00:13</span>
                             <li class="clearfix message-of-you">
-                                <p class="message you">Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    Laudantium molestias
-                                    omnis praesentium vel eius voluptates voluptatibus aut, distinctio ex adipisci at
-                                    eligendi quas ea repudiandae repellat minima vitae provident esse. Ullam
-                                    perspiciatis quasi eos aperiam dolor? Iste, architecto tempore nesciunt,
-                                    consequuntur, esse dolores similique quibusdam odit soluta aperiam earum nemo
-                                    deleniti adipisci reprehenderit. Itaque ratione, pariatur saepe omnis ab nobis
-                                    consectetur nisi amet odio sequi fugit, veniam adipisci aliquid culpa excepturi.
-                                    Magni odit dolor, repellendus ex quaerat dolore illo non doloremque. Iure
-                                    accusantium facilis voluptates quos nihil voluptas magnam omnis accusamus non
-                                    veritatis quasi sunt, nemo numquam necessitatibus? Aliquam, eius.</p>
+                                <p class="message you">Hello</p>
                             </li> --}}
                         </ul>
                     </div>
@@ -337,6 +352,9 @@
                         <i class="fa fa-paper-plane icon-send" aria-hidden="true"></i>
                         <input type="text" class="input-message" id="send-message" placeholder="Nhập tin nhắn">
                     </div>
+                </div>
+                <div class="col-8 col-empty-message">
+                    <h5>Hãy chọn một đoạn chat hoặc bắt đầu cuộc trò chuyện mới</h5>
                 </div>
             </div>
         </div>
@@ -356,7 +374,6 @@
     $(document).ready(function() {
         let audio = new Audio();
         audio.src = "/sound.mp3";
-
         // let timeout = setInterval(function(){
         //     var title = document.title;
         //     document.title = (title == "test" ? "none" : "test");
@@ -375,6 +392,14 @@
                 'font-weight': 'unset'
             });
 
+            $('.col-info-user').css({
+                'display': 'block'
+            });
+
+            $('.col-empty-message').css({
+                'display': 'none'
+            })
+
             $.ajax({
                 type: "POST",
                 url: "/show-friend",
@@ -388,12 +413,14 @@
                     $.each(response.data.messages, function(key,value) {
                         if(value.to == id && value.form == id_me ) {
                             $('.content-message').append(
+                                '<span class="time-chat">'+ formatDate(value.created_at) +'</span>' +
                                 '<li class="clearfix">' +
                                     '<p class="message me">' + value.text + '</p>'
                                 +'</li>'
                             );
                         }else if(value.form == id && value.to == id_me){
                             $('.content-message').append(
+                                '<span class="time-chat">'+ formatDate(value.created_at) +'</span>' +
                                 '<li class="clearfix message-of-you">' +
                                     '<p class="message you">' + value.text + '</p>'
                                 +'</li>'
@@ -430,18 +457,48 @@
             }
         });
 
-        function addMessage(data) {
-          
-            let id_me = $("#sign-out").attr('data-me'); //id của tk đang đăng nhập hiện tại
-            let form = $('#info-friend').attr('data-info-friend'); // id của người mà mình đang bấm xem họ
+        function formatDate(time) {
+            let timeCurrent = new Date();
+            let times = new Date(time);
+            let day = times.getDay();
+            let date = times.getDate();
+            let month = times.getMonth() + 1;
+            let year = times.getFullYear();
+            let hour = times.getHours();
+            let minute = times.getMinutes();
 
-            if (id_me == data.dataUser.to && form == data.dataUser.id) {
+            if(hour < 10) {
+                hour = "0" + hour;
+            }
+
+            if(minute < 10) {
+                minute = "0" + minute;
+            }
+
+            if(new Date(year, month-1, date).setHours(0, 0, 0, 0) === timeCurrent.setHours(0,0,0,0)) {
+                return hour + ":" + minute;
+            }else{
+                return hour + ":" + minute + ", " + date + " Tháng " + month + ", " + year;
+            }
+        }
+
+        function addMessage(data) {
+            
+            // console.log(data);
+
+            let id_of_me = $("#sign-out").attr('data-me'); //id của tk đang đăng nhập hiện tại
+            let id_of_my_friend = $('#info-friend').attr('data-info-friend'); // id của người mà mình muốn gửi tin đến họ
+
+            // data.dataUser.to: id của người mà mình gửi tin đến họ
+            //data.dataUser.id: id của chính tài khoản đang đăng nhập
+
+            if (id_of_me == data.dataUser.to && id_of_my_friend == data.dataUser.id) {
                 $('.content-message').append(
                     '<li class="clearfix message-of-you">' +
                         '<p class="message you">' + data.dataUser.text + '</p>'
                     +'</li>'
                 );
-            } else if (id_me == data.dataUser.to && form != data.dataUser.id) {
+            } else if (id_of_me == data.dataUser.to && id_of_my_friend != data.dataUser.id) {
                 $('.bold-name' + data.dataUser.id).css({
                     'font-weight': 'bold'
                 })
