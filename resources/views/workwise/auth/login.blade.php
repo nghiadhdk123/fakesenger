@@ -3,7 +3,15 @@
 
 {{-- Header --}}
 @include('workwise.includes.header', ['title' => 'WorkWise - Đăng nhập hoặc đăng ký'])
-
+<style>
+    .error-register {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-style: italic;
+        font-size: 13px;
+        color: red;
+    }
+</style>
 <body class="sign-in">
     <div class="wrapper">
         <div class="sign-in-page">
@@ -14,7 +22,8 @@
                             <div class="cmp-info">
                                 <div class="cm-logo">
                                     <img src="/workwise/images/cm-logo.png" alt>
-                                    <p>Workwise, là một nền tảng trao đổi trên mạng xã hội, nơi mọi người và chuyên gia độc lập kết nối và cộng tác từ xa</p>
+                                    <p>Workwise, là một nền tảng trao đổi trên mạng xã hội, nơi mọi người và chuyên gia
+                                        độc lập kết nối và cộng tác từ xa</p>
                                 </div>
                                 <img src="/workwise/images/cm-main-img.png" alt>
                             </div>
@@ -22,24 +31,27 @@
                         <div class="col-lg-6">
                             <div class="login-sec">
                                 <ul class="sign-control">
-                                    <li data-tab="tab-1" class="current"><a href="#" title>Đăng nhập</a></li>
-                                    <li data-tab="tab-2"><a href="#" title>Đăng ký</a></li>
+                                    <li data-tab="tab-1" class="current" id="li-tab-1"><a href="#" class="tab-current" title>Đăng nhập</a></li>
+                                    <li data-tab="tab-2" id="li-tab-2"><a href="#" class="tab-current" title>Đăng ký</a></li>
                                 </ul>
-                                <div class="sign_in_sec " id="tab-1">
+                                <div class="sign_in_sec current" id="tab-1">
                                     <h3>Đăng nhập</h3>
-                                    <form>
+                                    <form action="{{ route('login') }}" method="POST" class="form-auth" id="login">
+                                    @csrf
                                         <div class="row">
                                             <div class="col-lg-12 no-pdd">
                                                 <div class="sn-field">
-                                                    <input type="text" name="email" placeholder="Email">
+                                                    <input type="text" name="email" class="enter-input" placeholder="Email" data-error="#errNm">
                                                     <i class="la la-user"></i>
                                                 </div>
+                                                <span id="errNm" class="error-register">&nbsp;</span>
                                             </div>
                                             <div class="col-lg-12 no-pdd">
                                                 <div class="sn-field">
-                                                    <input type="password" name="password" placeholder="Mật khẩu">
+                                                    <input type="password" name="password" class="enter-input" placeholder="Mật khẩu" data-error="#errEm">
                                                     <i class="la la-lock"></i>
                                                 </div>
+                                                <span id="errEm" class="error-register">&nbsp;</span>
                                             </div>
                                             <div class="col-lg-12 no-pdd">
                                                 <div class="checky-sec">
@@ -61,42 +73,48 @@
                                     <div class="login-resources">
                                         <h4>Đăng nhập qua tài khoản xã hội</h4>
                                         <ul>
-                                            <li><a href="#" title class="fb"><i
-                                                        class="fa fa-facebook"></i>Đăng nhập với tài khoản Facebook</a></li>
-                                            <li><a href="#" title class="tw"><i
+                                            <li><a href="{{ route('redirect-to-facebook') }}" title class="fb"><i
+                                                        class="fa fa-facebook"></i>Đăng nhập với tài khoản Facebook</a>
+                                            </li>
+                                            <li><a href="{{ route('redirect-to-google') }}" title class="tw"><i
                                                         class="fa fa-google"></i>Đăng nhập với tài khoản Google</a></li>
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="sign_in_sec current" id="tab-2">
+                                <div class="sign_in_sec" id="tab-2">
                                     <h3>Đăng ký</h3>
                                     <div class="dff-tab current" id="tab-3">
-                                        <form>
+                                        <form action="{{ url('/register') }}" method="POST" id="register" class="form-auth">
+                                        @csrf
                                             <div class="row">
                                                 <div class="col-lg-12 no-pdd">
                                                     <div class="sn-field">
-                                                        <input type="text" name="name" placeholder="Họ và tên">
                                                         <i class="la la-user"></i>
+                                                        <input type="text" name="name" class="enter-input" placeholder="Họ và tên" data-error="#errNmR">
                                                     </div>
+                                                    <span id="errNmR" class="error-register">&nbsp;</span>
                                                 </div>
                                                 <div class="col-lg-12 no-pdd">
                                                     <div class="sn-field">
-                                                        <input type="text" name="country" placeholder="Email">
+                                                        <input type="text" name="email" class="enter-input" placeholder="Email" data-error="#errEmR">
                                                         <i class="la la-envelope"></i>
                                                     </div>
+                                                    <span id="errEmR" class="error-register">&nbsp;</span>
                                                 </div>
                                                 <div class="col-lg-12 no-pdd">
                                                     <div class="sn-field">
-                                                        <input type="password" name="password" placeholder="Mật khẩu">
+                                                        <input type="password" name="password" id="password" class="enter-input" placeholder="Mật khẩu" data-error="#errPwR">
                                                         <i class="la la-lock"></i>
                                                     </div>
+                                                    <span id="errPwR" class="error-register">&nbsp;</span>
                                                 </div>
                                                 <div class="col-lg-12 no-pdd">
                                                     <div class="sn-field">
-                                                        <input type="password" name="repeat-password"
-                                                            placeholder="Nhập lại nhập khẩu">
+                                                        <input type="password" name="repeat-password" class="enter-input"
+                                                            placeholder="Nhập lại nhập khẩu" data-error="#errRPwR">
                                                         <i class="la la-lock"></i>
                                                     </div>
+                                                    <span id="errRPwR" class="error-register">&nbsp;</span>
                                                 </div>
                                                 <div class="col-lg-12 no-pdd">
                                                     <div class="checky-sec st2">
@@ -105,7 +123,8 @@
                                                             <label for="c2">
                                                                 <span></span>
                                                             </label>
-                                                            <small>Có, tôi hiểu và đồng ý với Điều khoản & Điều kiện WorkWise.</small>
+                                                            <small>Có, tôi hiểu và đồng ý với Điều khoản & Điều kiện
+                                                                WorkWise.</small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -128,11 +147,11 @@
             </div>
         </div>
     </div>
-    
+
     {{-- Footer --}}
     @include('workwise.includes.footer')
+    <script src="/workwise/js/validate.min.js"></script>
+    <script src="/workwise/auth.js"></script>
 </body>
-
-<!-- Mirrored from gambolthemes.net/workwise-new/sign-in.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 16 Apr 2023 14:59:04 GMT -->
 
 </html>

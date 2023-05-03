@@ -161,48 +161,22 @@
                 <a href="#" title><i class="fa fa-bars"></i></a>
             </div>
             <div class="user-account">
-                <div class="user-info">
-                    <img src="/workwise/images/resources/user.png" alt>
-                    <a href="#" title>John</a>
+                <div class="user-info d-flex justify-content-around">
+                    <img src="{{ Auth::user()->userInfo->avatar ? Auth::user()->userInfo->avatar : '/workwise/images/resources/user.png' }}" width="40px"
+                    height="40px"; alt >
+                    {{-- <a href="#" title>Nghiêm</a> --}}
                     <i class="la la-sort-down"></i>
                 </div>
                 <div class="user-account-settingss" id="users">
-                    <h3>Online Status</h3>
-                    <ul class="on-off-status">
-                        <li>
-                            <div class="fgt-sec">
-                                <input type="radio" name="cc" id="c5">
-                                <label for="c5">
-                                    <span></span>
-                                </label>
-                                <small>Online</small>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="fgt-sec">
-                                <input type="radio" name="cc" id="c6">
-                                <label for="c6">
-                                    <span></span>
-                                </label>
-                                <small>Offline</small>
-                            </div>
-                        </li>
-                    </ul>
                     <h3>Custom Status</h3>
-                    <div class="search_form">
-                        <form>
-                            <input type="text" name="search">
-                            <button type="submit">Ok</button>
-                        </form>
-                    </div>
-                    <h3>Setting</h3>
+                    <h3>Cài đặt</h3>
                     <ul class="us-links">
                         <li><a href="profile-account-setting.html" title>Account Setting</a></li>
                         <li><a href="#" title>Privacy</a></li>
                         <li><a href="#" title>Faqs</a></li>
                         <li><a href="#" title>Terms & Conditions</a></li>
                     </ul>
-                    <h3 class="tc"><a href="sign-in.html" title>Logout</a></h3>
+                    <h3 class="tc"><a href="{{ route('logout') }}" title>Đăng xuất</a></h3>
                 </div>
             </div>
         </div>

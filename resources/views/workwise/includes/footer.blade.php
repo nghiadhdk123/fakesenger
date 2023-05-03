@@ -5,3 +5,4 @@
 <script type="text/javascript" src="/workwise/lib/slick/slick.min.js"></script>
 <script type="text/javascript" src="/workwise/js/scrollbar.js"></script>
 <script type="text/javascript" src="/workwise/js/script.js"></script>
+<script src="/toastr/toastr.min.js"></script>

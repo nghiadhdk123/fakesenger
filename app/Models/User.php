@@ -18,9 +18,15 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'type_login',
+        'google_id',
+        'facebook_id',
         'name',
         'email',
         'password',
+        'status',
+        'token',
+        'time_life_token',
     ];
 
     /**
@@ -29,8 +35,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        'facebook_id',
+        'google_id',
         'password',
         'remember_token',
+        'token',
+        'time_life_token'
     ];
 
     /**
@@ -45,4 +55,8 @@ class User extends Authenticatable
     // public function messages() {
     //     return $this->hasMany(Chat::class, 'form');
     // }
+
+    public function userInfo() {
+        return $this->hasOne(UserInfo::class);
+    }
 }

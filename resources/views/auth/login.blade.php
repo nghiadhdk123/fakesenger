@@ -1,7 +1,7 @@
 @extends('auth.layout.master')
 
 @section('content')
-    <form action="{{ url('/login') }}" method="POST">
+    <form action="{{ url('/messenger/login') }}" method="POST">
         @csrf
             <h3>Đăng nhập</h3>
 

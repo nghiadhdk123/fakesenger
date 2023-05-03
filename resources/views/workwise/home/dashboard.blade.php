@@ -16,7 +16,7 @@
                                             </div>
                                         </div>
                                         <div class="user-specs">
-                                            <h3>John Doe</h3>
+                                            <h3>{{ Auth::user()->name }}</h3>
                                             <span>Graphic Designer at Self Employed</span>
                                         </div>
                                     </div>

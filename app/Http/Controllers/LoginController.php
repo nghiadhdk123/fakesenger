@@ -27,7 +27,7 @@ class LoginController extends Controller
         $user = User::where('email', $data['email'])->first();
         if($user && Hash::check($data['password'], $user->password)) {
             // Kiểm tra xem tài khoản đã đã xác thực email chưa
-            if($user->status == 0) {
+            if($user->status == 1) {
                 $token = $this->createTokenVerifiableEmail($user->email);
                 $user->token =  random_int(100000, 999999);
                 $user->time_life_token = Carbon::now('Asia/Ho_Chi_Minh')->addMinutes(5);

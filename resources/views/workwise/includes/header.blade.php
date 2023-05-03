@@ -18,4 +18,5 @@
     <link rel="stylesheet" type="text/css" href="/workwise/lib/slick/slick-theme.css">
     <link rel="stylesheet" type="text/css" href="/workwise/css/style.css">
     <link rel="stylesheet" type="text/css" href="/workwise/css/responsive.css">
+    <link rel="stylesheet" href="/toastr/toastr.min.css">
 </head>

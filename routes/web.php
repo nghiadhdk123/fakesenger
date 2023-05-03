@@ -13,17 +13,48 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', function() {
-    return view('workwise.auth.login');
+// Route::get('/test', function() {
+//     return view('admin.home.dashboard');
+// });
+
+Route::group([
+    'namespace' => "Admin",
+    'prefix' => 'admin',
+    'middleware' => 'localization'
+], function () {
+    Route::get('/', 'DashboardController@index');
+
+    // Thay đổi ngôn ngữ
+    Route::get('/change-language/{language}', 'LangController@changeLanguage')->name('change-language');
+});
+
+Route::group([
+    'namespace' => "Client\Auth\Social",
+    'prefix' => '/',
+], function() {
+
+    Route::get('login', 'LoginController@formLogin')->name('form-login');
+    Route::post('/login', 'LoginController@login')->name('login');
+
+    Route::post('/register', 'LoginController@register');
+
+    Route::prefix('auth')->group(function () {
+        Route::get('/facebook', 'LoginController@redirectToFacebook')->name('redirect-to-facebook');
+        Route::get('/facebook/callback', 'LoginController@handleFacebookCallback');
+
+        Route::get('/google', 'LoginController@redirectToGoogle')->name('redirect-to-google');
+        Route::get('/google/callback', 'LoginController@handleGoogleCallback');
+
+        Route::get('/logout', 'LogoutController@logout')->name('logout');
+    });
 });
 
 Route::get('/groups', function() {
-    return view('workwise.groups.index');
+    return view('workwise.groups.profle-group');
 });
 
 Route::group([
     'middleware' => ['auth','PreventBackHistory'],
-    'namespace' => "App\Http\Controllers"
 ],function () {
     Route::get('/message', 'ChatController@index');
     Route::post('/show-friend', 'ChatController@showFriend');
@@ -33,7 +64,7 @@ Route::group([
     Route::group([
         'namespace' => "Client"
     ], function() {
-        Route::get('/','DashboardController@index');
+        Route::get('/','DashboardController@index')->name('home');
     });
 
     //Đăng xuất tài khoản
@@ -41,9 +72,9 @@ Route::group([
 });
 
 
-Route::get('/form-login', 'App\Http\Controllers\LoginController@formLogin')->name('form-login');
-Route::post('/login', 'App\Http\Controllers\LoginController@login');
-Route::post('/register', 'App\Http\Controllers\LoginController@register');
+Route::get('/messenger/form-login', 'LoginController@formLogin');
+Route::post('/messenger/login', 'App\Http\Controllers\LoginController@login');
+Route::post('/messenger/register', 'App\Http\Controllers\LoginController@register');
 Route::get("/verifiablde-email", 'App\Http\Controllers\LoginController@verifiableEmail');
 Route::post("/check-verifiablde-email", 'App\Http\Controllers\LoginController@checkVerifiableEmail');
 Route::get("/send-again-email", 'App\Http\Controllers\LoginController@sendAgainEmail');
